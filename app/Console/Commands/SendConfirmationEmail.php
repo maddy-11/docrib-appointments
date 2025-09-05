@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Twilio\Rest\Client;
 use App\Models\Appointment;
 use Carbon\Carbon;
+use App\Services\WhatsAppService;
 class SendConfirmationEmail extends Command
 {
     /**
@@ -14,7 +15,13 @@ class SendConfirmationEmail extends Command
      * You can pass the recipient email as an argument if you want.
      */
     protected $signature = 'email:test';
+    protected $whatsappService;
+    public function __construct(WhatsAppService $whatsappService)
+    {
+        parent::__construct();
 
+        $this->whatsappService = $whatsappService;
+    }
     /**
      * The console command description.
      */
@@ -37,6 +44,7 @@ class SendConfirmationEmail extends Command
             ->groupBy('mobile');
         })->get();
         $domain = env('APP_URL');
+
         foreach($appointments as $appointment){
             $receiverName = $appointment->name;
 
@@ -70,27 +78,13 @@ class SendConfirmationEmail extends Command
                 }
             }
 
-        // ---
-            $general = gs();
-            $sid    = $general->sms_config->twilio->account_sid;
-            $token  = $general->sms_config->twilio->auth_token;
-            $twilio = new Client($sid, $token);
-            $number = $general->sms_config->twilio->from;
-            $contentVariables = json_encode([
-                "date" => "{$appointment->booking_date}",
-                "time" => "{$appointment->time_serial}",
-                'first_name' => $appointment->name
-            ]);
-            $recipient = $appointment->mobile;
-            $message = $twilio->messages->create(
-                "whatsapp:{$recipient}",
-                [
-                    "from" => "whatsapp:{$number}",
-                    "contentSid" => "HX69d1e5581213120e68087fe7c16217cd",
-                    "contentVariables" => $contentVariables,
-                    "body" => "Your Message"
-                ]
-            );
+
+            // ---
+
+            $this->whatsappService->sendAppointmentTemplate($appointment->mobile, $appointment->name, $appointment->doctor->name, $appointment->booking_date, $appointment->time_serial);
+
+
+            // ---
             $this->info("SMS sent");
             $appointment->is_confirmation_sent = true;
             $appointment->save();

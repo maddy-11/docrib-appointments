@@ -17,3 +17,5 @@ yarn-error.log
 /storage/framework/cache
 /storage/framework/sessions
 /storage/framework/views
+/storage/debugbar
+/storage/logs

@@ -7,7 +7,7 @@ use App\Services\WhatsAppService;
 
 class AppointmentConfirmationController extends Controller
 {
-    public function whatsapp_webhook_response(Request $request)
+    public function whatsapp_webhook_response(Request $request, WhatsAppService $whatsapp)
 {
     if ($request->isMethod('get')) {
         $verifyToken = "my_custom_verify_token";
@@ -36,7 +36,6 @@ class AppointmentConfirmationController extends Controller
         $type = $message['type'];
 
         // \Log::info('WhatsApp Webhook Raw:', $message, $from, $type);
-        // return;
         try {
             $from = "+" . $from;
             $appointment = \App\Models\Appointment::where('mobile', $from)
@@ -53,6 +52,7 @@ class AppointmentConfirmationController extends Controller
                     if ($appointment) {
                         $appointment->is_confirmed = true;
                         $appointment->save();
+                        return $whatsapp->sendConfirmationMessage("923179925836");
                         \Log::info("✅ Appointment confirmed for {$from}");
                     }
                 }
@@ -61,24 +61,26 @@ class AppointmentConfirmationController extends Controller
                     if ($appointment) {
                         $appointment->is_confirmed = false;
                         $appointment->save();
+                        return $whatsapp->sendRecheduleMessage("923179925836");
                         \Log::info("🔄 Appointment reschedule requested by {$from}");
                     }
                 }
             }
-
             if ($type === 'text') {
                 $incoming = strtolower(trim($message['text']['body']));
 
-                if (str_contains($incoming, 'Confirm') || $incoming === 'y' || $incoming === 'yes') {
+                if (str_contains($incoming, 'confirm') || $incoming === 'y' || $incoming === 'yes') {
                     if ($appointment) {
                         $appointment->is_confirmed = true;
                         $appointment->save();
+                        $whatsapp->sendConfirmationMessage("923179925836");
                         \Log::info("✅ Appointment confirmed (text) for {$from}");
                     }
-                } elseif (str_contains($incoming, 'Reschedule') || str_contains($incoming, 'change')) {
+                } elseif (str_contains($incoming, 'reschedule') || str_contains($incoming, 'change')) {
                     if ($appointment) {
                         $appointment->is_confirmed = false;
                         $appointment->save();
+                        $whatsapp->sendRecheduleMessage("923179925836");
                         \Log::info("🔄 Appointment reschedule requested (text) by {$from}");
                     }
                 }
@@ -127,27 +129,5 @@ class AppointmentConfirmationController extends Controller
             return redirect()->route('home')
             ->with('error', 'The appointment could not be found or has already been processed.');
         }
-    }
-
-    function send_confirmation_message(){
-        return $whatsapp->sendAppointmentTemplate(
-        "923179925836",          // recipient
-        "John",                  // name
-        "broadband installation",// service
-        "2025-12-31",            // date
-        "10:00 AM",              // start time
-        "2:00 PM"                // end time
-    );
-    }
-
-    function send_rechedule_message(){
-        return $whatsapp->sendAppointmentTemplate(
-        "923179925836",          // recipient
-        "John",                  // name
-        "broadband installation",// service
-        "2025-12-31",            // date
-        "10:00 AM",              // start time
-        "2:00 PM"                // end time
-    );
     }
 }

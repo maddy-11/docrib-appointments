@@ -78,20 +78,6 @@ class SmsGateway{
 		@file_get_contents("https://api.smsbroadcast.com.au/api-adv.php?username=".$this->config->sms_broadcast->username."&password=".$this->config->sms_broadcast->password."&to=$this->to&from=$this->fromName&message=$message&ref=112233&maxsplit=5&delay=15");
 	}
 
-	// public function twilio(){
-	// 	$account_sid = $this->config->twilio->account_sid;
-	// 	$auth_token = $this->config->twilio->auth_token;
-	// 	$twilio_number = $this->config->twilio->from;
-
-	// 	$client = new Client($account_sid, $auth_token);
-	// 	$client->messages->create(
-	// 	    '+'.$this->to,
-	// 	    array(
-	// 	        'from' => $twilio_number,
-	// 	        'body' => $this->message
-	// 	    )
-	// 	);
-	// }
 
 	public function twilio() {
 		$general = gs();

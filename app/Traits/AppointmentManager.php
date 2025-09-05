@@ -9,15 +9,18 @@ use App\Models\Doctor;
 use Carbon\Carbon;
 use App\Models\GatewayCurrency;
 use Illuminate\Http\Request;
-
+use App\Services\WhatsAppService;
 /**
  * All Common functionalities to make an appointment
  */
 trait AppointmentManager
 {
     public $userType;
-
-
+    protected $whatsappService;
+    public function __construct(WhatsAppService $whatsappService)
+    {
+        $this->whatsappService = $whatsappService;
+    }
     public function form()
     {
         $pageTitle = 'Make Appointment';
@@ -168,6 +171,8 @@ trait AppointmentManager
             return view($this->activeTemplate . 'user.payment.deposit', compact('pageTitle', 'fees', 'doctorId', 'trx', 'email', 'gatewayCurrency'));
         }
 
+        $this->whatsappService->sendAppointmentConfirmation($mobile, $request->name, $appointment->booking_date, $appointment->time_serial, $doctor->name);
+        
         notify($this->notifyUser($appointment), 'APPOINTMENT_CONFIRMATION', [
             'booking_date' => $appointment->booking_date,
             'time_serial'  => $appointment->time_serial,
