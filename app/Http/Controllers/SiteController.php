@@ -18,16 +18,16 @@ class SiteController extends Controller
 {
     public function index(){
         $pageTitle = 'Home';
-        $sections = Page::where('tempname',$this->activeTemplate)->where('slug','/')->first();
-        return view($this->activeTemplate . 'home', compact('pageTitle','sections'));
+        $sections = Page::where('tempname',activeTemplate())->where('slug','/')->first();
+        return view(activeTemplate() . 'home', compact('pageTitle','sections'));
     }
 
     public function pages($slug)
     {
-        $page = Page::where('tempname',$this->activeTemplate)->where('slug',$slug)->firstOrFail();
+        $page = Page::where('tempname',activeTemplate())->where('slug',$slug)->firstOrFail();
         $pageTitle = $page->name;
         $sections = $page->secs;
-        return view($this->activeTemplate . 'pages', compact('pageTitle','sections'));
+        return view(activeTemplate() . 'pages', compact('pageTitle','sections'));
     }
 
     public function contact()
@@ -35,8 +35,8 @@ class SiteController extends Controller
         $pageTitle      = "Contact Us";
         $contactCon     = getContent('contact_us.content', true);
         $socialElements = getContent('social_icon.element', false, null, true);
-        $sections       = Page::where('tempname', $this->activeTemplate)->where('slug', 'contact')->firstOrFail();
-        return view($this->activeTemplate . 'contact', compact('pageTitle', 'contactCon', 'socialElements', 'sections'));
+        $sections       = Page::where('tempname', activeTemplate())->where('slug', 'contact')->firstOrFail();
+        return view(activeTemplate() . 'contact', compact('pageTitle', 'contactCon', 'socialElements', 'sections'));
     }
 
     public function contactSubmit(Request $request)
@@ -96,8 +96,8 @@ class SiteController extends Controller
         $pageTitle = 'Blogs';
         $blogs     = Frontend::where('data_keys', 'blog.element')->latest()->paginate(getPaginate());
         $latest    = Frontend::latest()->where('data_keys', 'blog.element')->limit(10)->get();
-        $sections  = Page::where('tempname', $this->activeTemplate)->where('slug', 'blog')->first();
-        return view($this->activeTemplate . 'blog', compact('pageTitle', 'blogs', 'latest', 'sections'));
+        $sections  = Page::where('tempname', activeTemplate())->where('slug', 'blog')->first();
+        return view(activeTemplate() . 'blog', compact('pageTitle', 'blogs', 'latest', 'sections'));
     }
 
     public function blogDetails($slug, $id)
@@ -116,14 +116,14 @@ class SiteController extends Controller
         $seoContents['social_description'] = strLimit(strip_tags($blog->data_values->description_nic), 150);
         $seoContents['image']              = getImage('assets/images/frontend/blog/' . @$blog->data_values->image, '830x460');
         $seoContents['image_size']         = '830x460';
-        return view($this->activeTemplate . 'blog_details', compact('blog', 'pageTitle', 'latestPosts', 'seoContents'));
+        return view(activeTemplate() . 'blog_details', compact('blog', 'pageTitle', 'latestPosts', 'seoContents'));
 
     }
 
     public function login()
     {
         $pageTitle = 'Login';
-        return view($this->activeTemplate . 'login',compact('pageTitle'));
+        return view(activeTemplate() . 'login',compact('pageTitle'));
     }
 
 
@@ -182,7 +182,7 @@ class SiteController extends Controller
             return to_route('home');
         }
         $maintenance = Frontend::where('data_keys','maintenance.data')->first();
-        return view($this->activeTemplate.'maintenance',compact('pageTitle','maintenance'));
+        return view(activeTemplate().'maintenance',compact('pageTitle','maintenance'));
     }
 
 }

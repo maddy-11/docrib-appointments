@@ -28,7 +28,7 @@ trait SupportTicketManager
         }
         $pageTitle = "Support Tickets";
         $supports = SupportTicket::where($this->column, $user->id)->orderBy('id', 'desc')->paginate(getPaginate());
-        return view($this->activeTemplate . $this->userType . '.support.index', compact('supports', 'pageTitle'));
+        return view(activeTemplate() . $this->userType . '.support.index', compact('supports', 'pageTitle'));
     }
 
     public function openSupportTicket()
@@ -39,7 +39,7 @@ trait SupportTicketManager
             return to_route('home');
         }
         $pageTitle = "Open Ticket";
-        return view($this->activeTemplate . $this->userType . '.support.create', compact('pageTitle', 'user'));
+        return view(activeTemplate() . $this->userType . '.support.create', compact('pageTitle', 'user'));
     }
 
     public function storeSupportTicket(Request $request)
@@ -104,7 +104,7 @@ trait SupportTicketManager
         $myTicket = SupportTicket::where('ticket', $ticket)->where($this->column, $userId)->orderBy('id', 'desc')->firstOrFail();
         $messages = SupportMessage::where('support_ticket_id', $myTicket->id)->with('ticket', 'admin', 'attachments')->orderBy('id', 'desc')->get();
 
-        return view($this->activeTemplate . $this->userType . '.support.view', compact('myTicket', 'messages', 'pageTitle', 'user', 'layout'));
+        return view(activeTemplate() . $this->userType . '.support.view', compact('myTicket', 'messages', 'pageTitle', 'user', 'layout'));
     }
 
 

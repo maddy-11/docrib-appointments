@@ -121,7 +121,7 @@ class PaymentController extends Controller
         }
 
         $pageTitle = 'Payment Confirm';
-        return view($this->activeTemplate . $data->view, compact('data', 'pageTitle', 'deposit'));
+        return view(activeTemplate() . $data->view, compact('data', 'pageTitle', 'deposit'));
     }
 
 
@@ -201,7 +201,7 @@ class PaymentController extends Controller
             $pageTitle = 'Deposit Confirm';
             $method = $data->gatewayCurrency();
             $gateway = $method->method;
-            return view($this->activeTemplate . 'user.payment.manual', compact('data', 'pageTitle', 'method', 'gateway'));
+            return view(activeTemplate() . 'user.payment.manual', compact('data', 'pageTitle', 'method', 'gateway'));
         }
         abort(404);
     }

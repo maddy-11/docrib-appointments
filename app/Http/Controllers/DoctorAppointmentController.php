@@ -29,7 +29,7 @@ class DoctorAppointmentController extends Controller
             $doctors = $doctors->where('id', $request->doctor);
         }
         $doctors = $doctors->orderBy('id', 'DESC')->with('department')->paginate(getPaginate());
-        return view($this->activeTemplate  . 'search', compact('pageTitle', 'departments', 'doctors'));
+        return view(activeTemplate()  . 'search', compact('pageTitle', 'departments', 'doctors'));
     }
 
     public function locations($location)
@@ -38,7 +38,7 @@ class DoctorAppointmentController extends Controller
         $locations   = Location::orderBy('id', 'DESC')->whereHas('doctors')->get();
         $departments = Department::orderBy('id', 'DESC')->whereHas('doctors')->get();
         $doctors     = Doctor::active()->where('location_id', $location)->orderBy('id', 'DESC')->with('department', 'location')->paginate(getPaginate());
-        return view($this->activeTemplate . 'search', compact('pageTitle', 'locations', 'departments', 'doctors'));
+        return view(activeTemplate() . 'search', compact('pageTitle', 'locations', 'departments', 'doctors'));
     }
 
     public function departments($department)
@@ -47,7 +47,7 @@ class DoctorAppointmentController extends Controller
         $locations   = Location::orderBy('id', 'DESC')->whereHas('doctors')->get();
         $departments = Department::orderBy('id', 'DESC')->whereHas('doctors')->get();
         $doctors     = Doctor::active()->where('department_id', $department)->orderBy('id', 'DESC')->with('department', 'location')->paginate(getPaginate());
-        return view($this->activeTemplate . 'search', compact('pageTitle', 'locations', 'departments', 'doctors'));
+        return view(activeTemplate() . 'search', compact('pageTitle', 'locations', 'departments', 'doctors'));
     }
 
     public function featured()
@@ -56,7 +56,7 @@ class DoctorAppointmentController extends Controller
         $locations   = Location::orderBy('id', 'DESC')->whereHas('doctors')->get();
         $departments = Department::orderBy('id', 'DESC')->whereHas('doctors')->get();
         $doctors     = Doctor::active()->where('featured', Status::YES)->orderBy('id', 'DESC')->with('department', 'location')->paginate(getPaginate());
-        return view($this->activeTemplate . 'search', compact('pageTitle',  'locations', 'departments', 'doctors'));
+        return view(activeTemplate() . 'search', compact('pageTitle',  'locations', 'departments', 'doctors'));
     }
 
     public function booking($id = 0)
@@ -80,6 +80,6 @@ class DoctorAppointmentController extends Controller
             }
             $start->addDay();
         }
-        return view($this->activeTemplate . 'booking',  compact('availableDate', 'doctor', 'pageTitle'));
+        return view(activeTemplate() . 'booking',  compact('availableDate', 'doctor', 'pageTitle'));
     }
 }

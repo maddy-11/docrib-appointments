@@ -11,7 +11,7 @@ class PageBuilderController extends Controller
 
     public function managePages()
     {
-        $pdata = Page::where('tempname',$this->activeTemplate)->get();
+        $pdata = Page::where('tempname',activeTemplate())->get();
         $pageTitle = 'Manage Pages';
         return view('admin.frontend.builder.pages', compact('pageTitle','pdata'));
     }
@@ -23,13 +23,13 @@ class PageBuilderController extends Controller
             'slug' => 'required|min:3|string|max:40',
         ]);
 
-        $exist = Page::where('tempname', $this->activeTemplate)->where('slug', slug($request->slug))->exists();
+        $exist = Page::where('tempname', activeTemplate())->where('slug', slug($request->slug))->exists();
         if($exist){
             $notify[] = ['error', 'This page already exists on your current template. Please change the slug.'];
             return back()->withNotify($notify);
         }
         $page = new Page();
-        $page->tempname = $this->activeTemplate;
+        $page->tempname = activeTemplate();
         $page->name = $request->name;
         $page->slug = slug($request->slug);
         $page->save();
@@ -48,7 +48,7 @@ class PageBuilderController extends Controller
 
         $slug = slug($request->slug);
 
-        $exist = Page::where('tempname', $this->activeTemplate)->where('slug',$slug)->first();
+        $exist = Page::where('tempname', activeTemplate())->where('slug',$slug)->first();
         if(($exist) && $exist->slug != $page->slug){
             $notify[] = ['error', 'This page already exist on your current template. please change the slug.'];
             return back()->withNotify($notify);

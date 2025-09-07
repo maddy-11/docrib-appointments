@@ -168,7 +168,7 @@ trait AppointmentManager
             $trx      = $appointment->trx;
             $email    = $request->email;
 
-            return view($this->activeTemplate . 'user.payment.deposit', compact('pageTitle', 'fees', 'doctorId', 'trx', 'email', 'gatewayCurrency'));
+            return view(activeTemplate() . 'user.payment.deposit', compact('pageTitle', 'fees', 'doctorId', 'trx', 'email', 'gatewayCurrency'));
         }
 
         $this->whatsappService->sendAppointmentConfirmation($mobile, $request->name, $appointment->booking_date, $appointment->time_serial, $doctor->name);
